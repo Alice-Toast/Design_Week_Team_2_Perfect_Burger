@@ -8,6 +8,7 @@ public class Game_Manager : MonoBehaviour
 {
     public static int finalScore;
     public StarRating starRating;
+    public SoundManager soundMan;
     public static Game_Manager instance;
 
     public Transform bun;
@@ -31,6 +32,7 @@ public class Game_Manager : MonoBehaviour
     {
         if (gameOver && Input.GetKeyDown(KeyCode.Space))
         {
+            soundMan.makeClick();
             SceneManager.LoadScene(startScene);
         }
     }
@@ -59,6 +61,8 @@ public class Game_Manager : MonoBehaviour
 
     public void TopBunPlaced()
     {
+
+        soundMan.makeComplete();
         if (gameOver) return;
         EndGame(score >= winScore);
     }

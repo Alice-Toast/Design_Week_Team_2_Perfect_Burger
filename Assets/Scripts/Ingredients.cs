@@ -7,6 +7,7 @@ public class Ingredients : MonoBehaviour
     public bool stuck = false;
     public bool isPatty;
     public bool isTopBun;
+    public SoundManager soundMan;
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
@@ -42,6 +43,7 @@ public class Ingredients : MonoBehaviour
             if (isTopBun) Game_Manager.instance.TopBunPlaced();
             Game_Manager.instance.Scoring(transform.position);
             rb.isKinematic = true;
+            soundMan.makeStep();
 
             if (landOnBun) transform.SetParent(collision.transform);
             else transform.SetParent(other.transform.parent);
