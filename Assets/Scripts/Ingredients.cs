@@ -4,8 +4,10 @@ public class Ingredients : MonoBehaviour
 {
     Rigidbody rb;
     bool dropped = false;
-   public bool stuck = false;
-    
+    public bool stuck = false;
+    public bool isPatty;
+    public bool isTopBun;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
     {
@@ -37,6 +39,7 @@ public class Ingredients : MonoBehaviour
         if (landOnBun || landOnIngredients)
         {
             stuck = true;
+            if (isTopBun) Game_Manager.instance.TopBunPlaced();
             Game_Manager.instance.Scoring(transform.position);
             rb.isKinematic = true;
 

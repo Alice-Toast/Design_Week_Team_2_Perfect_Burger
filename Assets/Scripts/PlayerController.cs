@@ -12,10 +12,13 @@ public class PlayerController : MonoBehaviour
     public float minZ = -5f, maxZ = 5f;
 
     Ingredients hold;
+    public QTE qte;
 
     // Update is called once per frame
     void Update()
     {
+        if (Game_Manager.instance.gameOver) return;
+
         Move();
 
         if (Input.GetKeyDown(KeyCode.Space))
@@ -56,6 +59,7 @@ public class PlayerController : MonoBehaviour
             {
                 hold = ingredient;
                 hold.Grab(grabPoint);
+
             }
         }
     }
