@@ -4,7 +4,7 @@ public class Ingredients : MonoBehaviour
 {
     Rigidbody rb;
     bool dropped = false;
-    bool stuck = false;
+   public bool stuck = false;
     
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Awake()
@@ -37,7 +37,11 @@ public class Ingredients : MonoBehaviour
         if (landOnBun || landOnIngredients)
         {
             stuck = true;
+            Game_Manager.instance.Scoring(transform.position);
             rb.isKinematic = true;
+
+            if (landOnBun) transform.SetParent(collision.transform);
+            else transform.SetParent(other.transform.parent);
         }
     }
 }

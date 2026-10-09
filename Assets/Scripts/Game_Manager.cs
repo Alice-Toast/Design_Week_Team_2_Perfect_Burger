@@ -1,42 +1,37 @@
+using Unity.Hierarchy;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class Game_Manager : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    public static Game_Manager instance;
 
-    public GameObject[] burgerParts = new GameObject[11];
-    bool DropPart = false;
-    public int currentPart = 0;
-    public float speed = 1;
-    float currentTimer = 0;
-    public float[] dropTimes = new float[11];
-    bool gameFinished = false;
+    public Transform bun;
+    public int maxPoints = 5;
+    public float maxDistance = 0.1f;
+
+    public int score = 0;
 
     // Update is called once per frame
-    void Update()
+    void Awake()
     {
-        if (DropPart)
-        {
-            burgerParts[currentPart].transform.position = burgerParts[currentPart].transform.position + Vector3.down * speed * Time.deltaTime; // this drops the burger down for a set amount of time we couldn't use an animator as that changed the x and z position of the burger
-            currentTimer += Time.deltaTime;
-            if (currentTimer > dropTimes[currentPart])
-            { // when the timer is reached, stop dropping the part and prime the next part to be dropped
-                DropPart = false;
-                currentPart++; // goes to the next part.
-                currentTimer = 0f;
-                if (currentPart > 10)
-                {
-                    gameFinished = true;
-                }
-                
-
-            }
-        }
+        instance = this;
     }
     
-    public void DropBurgerPart()
+    public void Scoring(Vector3 ingredientPosition)
     {
-        DropPart = true; //when this function starts it initiates the next piece dropping
+        Vector2 ingredient = new Vector2(ingredientPosition.x, ingredientPosition.z);
+        Vector2 middle = new Vector2(bun.position.x, bun.position.z);
+        float distanceFromMiddle = Vector2.Distance(ingredient, middle);
+
+        int points = 0;
+
+        if (distanceFromMiddle < 0.02f) points = 5;
+        else if (distanceFromMiddle < 0.05f) points = 3;
+        else if (distanceFromMiddle < 0.1f) points = 1;
+
+
+        score += points;
     }
+
 }

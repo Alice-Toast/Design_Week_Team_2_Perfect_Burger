@@ -52,7 +52,7 @@ public class PlayerController : MonoBehaviour
         {
             Ingredients ingredient = hit.collider.GetComponent<Ingredients>();
 
-            if (ingredient != null)
+            if (ingredient != null && !ingredient.stuck)
             {
                 hold = ingredient;
                 hold.Grab(grabPoint);
