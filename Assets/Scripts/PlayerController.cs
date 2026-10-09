@@ -12,10 +12,13 @@ public class PlayerController : MonoBehaviour
     public float minZ = -5f, maxZ = 5f;
 
     Ingredients hold;
+    public QTE qte;
 
     // Update is called once per frame
     void Update()
     {
+        if (Game_Manager.instance.gameOver) return;
+
         Move();
 
         if (Input.GetKeyDown(KeyCode.Space))
@@ -52,10 +55,11 @@ public class PlayerController : MonoBehaviour
         {
             Ingredients ingredient = hit.collider.GetComponent<Ingredients>();
 
-            if (ingredient != null)
+            if (ingredient != null && !ingredient.stuck)
             {
                 hold = ingredient;
                 hold.Grab(grabPoint);
+
             }
         }
     }

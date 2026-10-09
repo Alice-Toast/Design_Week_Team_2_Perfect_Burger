@@ -1,42 +1,88 @@
+using TMPro;
+using Unity.Hierarchy;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class Game_Manager : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    public static int finalScore;
+    public StarRating starRating;
+    public static Game_Manager instance;
 
-    public GameObject[] burgerParts = new GameObject[11];
-    bool DropPart = false;
-    public int currentPart = 0;
-    public float speed = 1;
-    float currentTimer = 0;
-    public float[] dropTimes = new float[11];
-    bool gameFinished = false;
+    public Transform bun;
+    public int maxPoints = 5;
+    public float maxDistance = 0.1f;
 
-    // Update is called once per frame
+    public int score = 0;
+
+    public GameObject endPanel;
+    public TMP_Text accuracyText;
+    public TMP_Text timeText;
+    public TMP_Text scoreText;
+    public GameTimer timer;
+    int ingredientsPlaced = 0;
+
+    public int winScore = 40;
+    public bool gameOver = false;
+    public string startScene = "Start";
+
     void Update()
     {
-        if (DropPart)
+        if (gameOver && Input.GetKeyDown(KeyCode.Space))
         {
-            burgerParts[currentPart].transform.position = burgerParts[currentPart].transform.position + Vector3.down * speed * Time.deltaTime; // this drops the burger down for a set amount of time we couldn't use an animator as that changed the x and z position of the burger
-            currentTimer += Time.deltaTime;
-            if (currentTimer > dropTimes[currentPart])
-            { // when the timer is reached, stop dropping the part and prime the next part to be dropped
-                DropPart = false;
-                currentPart++; // goes to the next part.
-                currentTimer = 0f;
-                if (currentPart > 10)
-                {
-                    gameFinished = true;
-                }
-                
-
-            }
+            SceneManager.LoadScene(startScene);
         }
     }
-    
-    public void DropBurgerPart()
+    void Awake()
     {
-        DropPart = true; //when this function starts it initiates the next piece dropping
+        instance = this;
     }
+    
+    public void Scoring(Vector3 ingredientPosition)
+    {
+        Vector2 ingredient = new Vector2(ingredientPosition.x, ingredientPosition.z);
+        Vector2 middle = new Vector2(bun.position.x, bun.position.z);
+        float distanceFromMiddle = Vector2.Distance(ingredient, middle);
+
+        int points = 0;
+
+        if (distanceFromMiddle < 0.02f) points = 5;
+        else if (distanceFromMiddle < 0.05f) points = 3;
+        else if (distanceFromMiddle < 0.1f) points = 1;
+
+        score += points;
+        ingredientsPlaced++;
+        starRating.SetRatingFromScore(score);
+        finalScore = score;
+    }
+
+    public void TopBunPlaced()
+    {
+        if (gameOver) return;
+        EndGame(score >= winScore);
+    }
+
+    public void EndGame(bool fin)
+    {
+        gameOver = true;
+
+        int accuracy = 0;
+        if (ingredientsPlaced > 0)
+        {
+            accuracy = score * 100 / (ingredientsPlaced * maxPoints);
+        }
+
+
+        float time = timer.GetElapsedTime();
+        int minutes = Mathf.FloorToInt(time / 60f);
+        int seconds = Mathf.FloorToInt(time % 60f);
+
+        accuracyText.text = accuracy + "%";
+        timeText.text = minutes.ToString("00") + ":" + seconds.ToString("00");
+        scoreText.text = score.ToString();
+
+        endPanel.SetActive(true);
+    }
+
 }
